@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Doomscroll Break</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      color: #1e293b;
+      line-height: 1.65;
+    }
+    h1 { font-size: 1.75rem; margin-bottom: 4px; }
+    .meta { color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; }
+    h2 { font-size: 1.15rem; margin-top: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.9rem; }
+    th, td { border: 1px solid #e2e8f0; padding: 8px 12px; text-align: left; }
+    th { background: #f8fafc; font-weight: 600; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.875em; }
+    .summary-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 2rem;
+    }
+    .summary-box p { margin: 0; font-weight: 500; color: #166534; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <h1>🧠 Privacy Policy</h1>
+  <p class="meta">Doomscroll Break &nbsp;·&nbsp; Last updated: 2026-05-24</p>
+
+  <div class="summary-box">
+    <p>Doomscroll Break stores a small amount of data <strong>locally on your device only</strong>. No data is ever transmitted to any server. No analytics. No tracking. No third-party services.</p>
+  </div>
+
+  <h2>What data is stored</h2>
+  <p>All data is stored exclusively in <code>chrome.storage.local</code> — a sandboxed, device-local key-value store provided by Chrome. It is never synced, shared, or transmitted.</p>
+
+  <table>
+    <thead>
+      <tr><th>Storage key</th><th>What it holds</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>enabled</code></td><td>Boolean — extension on/off</td><td>Persists your preference across sessions</td></tr>
+      <tr><td><code>soundOn</code></td><td>Boolean — video sound on/off</td><td>Persists your mute preference</td></tr>
+      <tr><td><code>promptMode</code></td><td>Boolean — prompt-aware mode</td><td>Persists your content preference</td></tr>
+      <tr><td><code>sloganIndex</code></td><td>Integer — slogan rotation position</td><td>Keeps slogans from repeating on restart</td></tr>
+      <tr><td><code>autoCloseStreak</code></td><td>Object — auto-close count per day (7-day window)</td><td>Powers the daily streak counter in the overlay</td></tr>
+      <tr><td><code>selectorTelemetry</code></td><td>Object — per-selector match timestamps &amp; counts</td><td>Powers the popup health check. Never leaves your device.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>What data is NOT collected</h2>
+  <ul>
+    <li>No personal information</li>
+    <li>No browsing history</li>
+    <li>No prompt or conversation content</li>
+    <li>No usage analytics</li>
+    <li>No crash reports</li>
+    <li>No identifiers of any kind</li>
+  </ul>
+
+  <h2>Network access</h2>
+  <p>Doomscroll Break makes <strong>zero network requests</strong>. All video clips are bundled with the extension as local MP4 files. The content script observes the ChatGPT DOM to detect generation state — it does not send any data to or from those pages.</p>
+
+  <h2>Permissions</h2>
+  <table>
+    <thead>
+      <tr><th>Permission</th><th>Why it's needed</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>storage</code></td><td>To read and write the preference and telemetry keys listed above</td></tr>
+      <tr><td><code>tabs</code></td><td>To detect tab switches so the overlay timer can pause gracefully</td></tr>
+      <tr><td><code>host: chatgpt.com</code></td><td>The content script must run on chatgpt.com to observe the DOM and detect generation state</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Data retention</h2>
+  <p><code>autoCloseStreak</code> entries older than 7 days are automatically pruned. <code>selectorTelemetry</code> is capped at 32 entries. All data can be cleared at any time via Chrome → Settings → Privacy → Clear browsing data → Site data, or by uninstalling the extension.</p>
+
+  <h2>Contact</h2>
+  <p>Questions? Open an issue at <a href="https://github.com/JoshuaLaw10/DoomBreak/issues">github.com/JoshuaLaw10/DoomBreak/issues</a>.</p>
+</body>
+</html>

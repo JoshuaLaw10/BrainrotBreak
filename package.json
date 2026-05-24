@@ -7,11 +7,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "feed": "node scripts/generate-feed.mjs"
+    "feed": "node scripts/generate-feed.mjs",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "devDependencies": {
-    "vitest": "^1.6.0",
     "@vitest/coverage-v8": "^1.6.0",
-    "jsdom": "^24.0.0"
+    "jsdom": "^24.0.0",
+    "sharp": "^0.34.5",
+    "vitest": "^1.6.0"
   }
 }
