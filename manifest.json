@@ -1,0 +1,74 @@
+{
+  "name": "Doomscroll Break",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "description": "Intentional doomscrolling while ChatGPT thinks. Closes itself when your answer is ready.",
+
+  "minimum_chrome_version": "116",
+
+  "permissions": ["storage", "tabs"],
+
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://*.chatgpt.com/*"
+  ],
+
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+
+  "action": {
+    "default_title": "Doomscroll Break",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16":  "icons/icon-16.png",
+      "32":  "icons/icon-32.png",
+      "48":  "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+
+  "icons": {
+    "16":  "icons/icon-16.png",
+    "32":  "icons/icon-32.png",
+    "48":  "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+
+  "commands": {
+    "toggle-overlay": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+D",
+        "mac":     "Command+Shift+D"
+      },
+      "description": "Toggle the Doomscroll Break overlay"
+    }
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://*.chatgpt.com/*"
+      ],
+      "js": [
+        "data/keywords.js",
+        "data/slogans.js",
+        "data/feed.js",
+        "platforms/chatgpt.js",
+        "content_script.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["media/*.mp4"],
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://*.chatgpt.com/*"
+      ]
+    }
+  ]
+}

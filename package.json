@@ -1,0 +1,17 @@
+{
+  "name": "doombreak",
+  "version": "1.0.0",
+  "description": "Chrome extension: intentional doomscrolling while ChatGPT thinks.",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "feed": "node scripts/generate-feed.mjs"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "jsdom": "^24.0.0"
+  }
+}

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Doomscroll Break</title>
+    <style>
+      * { box-sizing: border-box; }
+
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        width: 280px;
+        padding: 14px;
+        background: #0f172a;
+        color: #e2e8f0;
+        margin: 0;
+      }
+
+      h3 {
+        margin: 0 0 4px 0;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: .01em;
+      }
+
+      .tagline {
+        font-size: 11px;
+        color: #64748b;
+        margin: 0 0 14px 0;
+      }
+
+      /* ── Main toggle ── */
+      #toggleBtn {
+        width: 100%;
+        padding: 11px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 14px;
+        transition: background .15s;
+      }
+      #toggleBtn.on  { background: #16a34a; color: #fff; }
+      #toggleBtn.off { background: #ef4444; color: #fff; }
+
+      /* ── Row (label + toggle switch) ── */
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .label-col { display: flex; flex-direction: column; min-width: 0; }
+      .label     { font-weight: 700; font-size: 13px; color: #f1f5f9; line-height: 1.15; }
+      .sub       { font-size: 11px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 185px; }
+
+      /* ── Toggle switch ── */
+      .switch { position: relative; display: inline-block; width: 44px; height: 26px; flex: 0 0 auto; }
+      .switch input { opacity: 0; width: 0; height: 0; }
+      .slider {
+        position: absolute; cursor: pointer; inset: 0;
+        background: #334155; border-radius: 999px; transition: .18s;
+      }
+      .slider:before {
+        position: absolute; content: "";
+        height: 20px; width: 20px; left: 3px; top: 3px;
+        background: #fff; border-radius: 999px;
+        transition: .18s; box-shadow: 0 2px 8px rgba(0,0,0,.3);
+      }
+      input:checked + .slider { background: #6366f1; }
+      input:checked + .slider:before { transform: translateX(18px); }
+
+      /* ── Divider ── */
+      .divider { border: none; border-top: 1px solid #1e293b; margin: 14px 0; }
+
+      /* ── Health check ── */
+      #health-section h4 {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        margin: 0 0 8px 0;
+      }
+
+      #health-list { list-style: none; padding: 0; margin: 0; }
+      #health-list li {
+        display: flex; align-items: center; gap: 7px;
+        font-size: 11.5px; color: #94a3b8; padding: 2px 0;
+      }
+      .health-dot {
+        width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto;
+      }
+      .health-ok     { background: #4ade80; }
+      .health-stale  { background: #facc15; }
+      .health-dead   { background: #f87171; }
+      .health-unseen { background: #475569; }
+
+      #health-summary {
+        font-size: 11px;
+        color: #475569;
+        margin-top: 6px;
+      }
+
+      /* ── Hint ── */
+      .hint { font-size: 11px; color: #475569; margin-top: 12px; line-height: 1.45; }
+      code {
+        background: #1e293b;
+        padding: 1px 5px;
+        border-radius: 5px;
+        font-family: monospace;
+        font-size: 10.5px;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>🧠 Doomscroll Break</h3>
+    <p class="tagline">Intentional scrolling. Automatic close.</p>
+
+    <button id="toggleBtn">…</button>
+
+    <div class="row" style="margin-top:14px;">
+      <div class="label-col">
+        <div class="label">Prompt-Aware Mode</div>
+        <div class="sub">Reels match your prompt vibe</div>
+      </div>
+      <label class="switch" title="Match reels to your prompt">
+        <input id="promptMode" type="checkbox" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Selector health check -->
+    <section id="health-section">
+      <h4>Selector Health</h4>
+      <ul id="health-list">
+        <li><span class="health-dot health-unseen"></span><span>Loading…</span></li>
+      </ul>
+      <p id="health-summary"></p>
+    </section>
+
+    <hr class="divider" />
+
+    <div class="hint">
+      Works on <code>chatgpt.com</code>.<br />
+      Enable → send a prompt → overlay appears → closes when answer is ready.
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
