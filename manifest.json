@@ -6,12 +6,7 @@
 
   "minimum_chrome_version": "116",
 
-  "permissions": ["storage", "tabs"],
-
-  "host_permissions": [
-    "https://chatgpt.com/*",
-    "https://*.chatgpt.com/*"
-  ],
+  "permissions": ["storage"],
 
   "background": {
     "service_worker": "service_worker.js"

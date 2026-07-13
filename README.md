@@ -1,51 +1,56 @@
 # 🧠 Doomscroll Break
 
-> A Chrome extension built before AI providers added background-task notifications. The product premise has since been absorbed by the platforms — but the engineering is a useful case study in MV3 architecture, DOM adapter patterns, and in-production selector telemetry.
+**Doomscroll intentionally while ChatGPT thinks. Auto-closes the moment your answer is ready.**
 
-**[Demo video](#demo) · [Technical writeup](docs/WRITEUP.md) · [Original pitch](docs/ORIGINAL_PITCH.md)**
+When ChatGPT is generating, you instinctively open a new tab and start scrolling — and don't come back. Doomscroll Break doesn't fight the habit; it contains it. The moment ChatGPT starts generating, a full-screen short-clip overlay opens. The moment your answer is ready, it closes itself. No discipline required.
 
----
-
-## Why this exists
-
-When I built this, ChatGPT had no "notify me when done" feature. The wait — anywhere from 5 to 60 seconds — created a predictable bad habit: open a new tab, start doomscrolling, forget you had a question in progress.
-
-The idea: give the wait a container. A full-screen short-clip overlay that opens the moment ChatGPT starts generating and closes automatically the moment it finishes. No discipline required. The extension does the closing.
-
-Shortly after, Claude and ChatGPT both shipped native background-mode + push notification features. The product premise is now redundant. But the engineering problems it forced me to solve aren't — and that's what this writeup is about.
+**[Technical writeup](docs/WRITEUP.md) · [Privacy policy](https://joshualaw10.github.io/DoomBreak/privacy.html) · [Original pitch](docs/ORIGINAL_PITCH.md)**
 
 ---
 
-## What I'd build differently
+## Features
 
-**The overlay should be a PiP window, not full-screen.** A 320×480 floating panel in the corner lets you see ChatGPT's response start streaming underneath — the "auto-close" transition feels natural instead of jarring.
+- **Auto-close** — the overlay disappears the instant ChatGPT finishes, so you never miss your answer
+- **Live status badge** — Thinking → Typing as the response develops
+- **Prompt-Aware Mode** — ask about sports, get sports clips; ask something calm, get calm clips
+- **Daily streak counter** — see how many times it pulled you back today
+- **Sound toggle** and keyboard shortcut (Cmd/Ctrl+Shift+D)
+- **Selector health check** — the popup warns you if ChatGPT changed its DOM and detection might be degraded
+- **100% local** — zero network requests, no analytics, no servers; all clips ship inside the extension
 
-**Pre-bundled clips can't replicate algorithmic content's feel.** The dopamine mechanism of doomscrolling is infinite + algorithmic + personal. Eighty curated Pexels clips is a screensaver, not a doomscroll feed. A live Reddit/YouTube Shorts embed would have been the right call.
+## Install
 
-**Auto-close that interrupts is hostile.** Closing the overlay mid-scroll with no transition is the worst possible UX. Fade to minimized, then let the user dismiss — never yank away.
+From source (Chrome Web Store listing pending):
 
-**Streak counters reward the wrong behavior.** "🔥 7 breaks today" means you got distracted seven times. A real behavior-change metric would be "time returned to context within N seconds." 
+```bash
+git clone https://github.com/JoshuaLaw10/DoomBreak
+cd DoomBreak
+PEXELS_API_KEY=xxx npm run source   # download clips (free key: pexels.com/api)
+npm run feed                        # validate + generate data/feed.js
+```
 
-**Validate the mechanic before sourcing assets.** I spent engineering time on clip sourcing tooling before testing whether the overlay actually felt good to use. Inverted.
+Then `chrome://extensions` → enable Developer Mode → "Load unpacked" → select the repo root. Open chatgpt.com and send a prompt.
 
 ---
 
-## The engineering worth keeping
+## The engineering
+
+ChatGPT's DOM changes frequently and without notice. Most extensions that scrape it break silently — users find out before the developer does. Doomscroll Break was built around that problem, and the patterns below are the interesting part of this repo.
 
 ### Platform adapter pattern
 
-ChatGPT's DOM changes frequently and without notice. The naive approach — scattered `querySelector` calls across a content script — means a single DOM change breaks detection silently and you find out from users.
-
-Every selector in Doombreak lives in one file: [`platforms/chatgpt.js`](platforms/chatgpt.js). The content script never touches raw CSS. When OpenAI ships a markup change, there's exactly one file to update, one diff to review.
+Every selector lives in one file: [`platforms/chatgpt.js`](platforms/chatgpt.js). The content script never touches raw CSS. When OpenAI ships a markup change, there's exactly one file to update, one diff to review.
 
 ```
 content_script.js       ← state machine, overlay lifecycle, no selectors
 platforms/chatgpt.js    ← all selectors, all DOM logic, nothing else
 ```
 
+This paid off immediately: the July 2026 fixture capture caught ChatGPT switching conversation turns from `<article>` to `<section>`. The fix was one line, in one file.
+
 ### Selector telemetry as a production canary
 
-The harder problem: how do you know your selectors still work in production, on real users' ChatGPT sessions, without building a backend?
+How do you know your selectors still work in production, on real users' ChatGPT sessions, without building a backend?
 
 Every successful selector match records a timestamp in `chrome.storage.local`. The popup reads those timestamps and surfaces a health warning if no stop-button selector has matched in 3+ days:
 
@@ -78,7 +83,7 @@ The heartbeat runs every 250ms while generating. The naive pattern calls four se
 ```javascript
 ChatGPT.getStateSnapshot()
 // → { generating, turnCount, signature, lastUserPrompt }
-// One turn of the conversation tree. Not four.
+// One walk of the conversation tree. Not four.
 ```
 
 ### Testing browser-embedded scripts without Puppeteer
@@ -96,7 +101,7 @@ mod._resetForTest();
 
 The `?t=` cache-buster forces vitest to treat each dynamic import as a new module, which re-runs all top-level initialization. Paired with `if (typeof module !== 'undefined') { module.exports = {...} }` at the bottom of the script, this gives full unit testability without spinning up a real browser.
 
-**Result: 79 passing tests, 7 skipped** (fixture tests pending real DOM captures, see `tests/fixtures/CAPTURE.md`).
+**Result: 92 passing tests**, including 7 fixture tests that run the adapter against real captured ChatGPT DOM (July 2026).
 
 ---
 
@@ -105,7 +110,7 @@ The `?t=` cache-buster forces vitest to treat each dynamic import as a new modul
 ```
 manifest.json           — Extension entrypoint (MV3)
 content_script.js       — State machine + overlay lifecycle
-service_worker.js       — Install init + message routing (no network calls)
+service_worker.js       — Install init, keyboard command relay, message routing
 popup.html / popup.js   — Control panel + selector health check
 
 data/
@@ -117,11 +122,13 @@ platforms/
   chatgpt.js            — All ChatGPT selectors, telemetry, state derivation
 
 scripts/
+  source-clips.mjs      — Pexels API clip downloader + ffmpeg compressor
   generate-feed.mjs     — Validates media/ + regenerates data/feed.js
   generate-icons.mjs    — SVG → 4× PNG rasterizer (requires sharp)
+  package.mjs           — Builds the Chrome Web Store upload zip
 
 tests/
-  doombreak.test.js     — Content script unit tests
+  doombreak.test.js     — Content script unit tests + real-DOM fixture tests
   telemetry.test.js     — Platform adapter tests
   fixtures/             — ChatGPT DOM captures (see CAPTURE.md)
 
@@ -155,30 +162,29 @@ _tick(snapshot)              ← state machine
 
 ---
 
-## Running locally
+## Development
 
 ```bash
 npm install
-npx vitest run          # 79 passing, 7 skipped
+npx vitest run          # 92 passing
+npm run source          # download clips from Pexels (needs PEXELS_API_KEY)
+npm run feed            # validate media/ + regenerate data/feed.js
+npm run package         # build dist/doombreak-vX.Y.Z.zip for the store
 ```
-
-To load in Chrome:
-1. `chrome://extensions` → enable Developer Mode
-2. "Load unpacked" → select this repo root
-3. Open chatgpt.com, send a prompt
 
 ---
 
 ## Privacy
 
-Zero network requests. All data in `chrome.storage.local` only. See [`docs/privacy.html`](docs/privacy.html) / [`PRIVACY.md`](PRIVACY.md) for the full policy and storage key listing.
+Zero network requests at runtime. All data stays in `chrome.storage.local`. See the [privacy policy](https://joshualaw10.github.io/DoomBreak/privacy.html) for the full storage key listing.
 
 ---
 
-## Lessons
+## Design notes
 
-- Validate the mechanic with 5 users before sourcing assets
-- Pre-bundled content can't replicate algorithmic content's feel
-- Auto-close that interrupts is hostile, not magical
-- Platforms eventually absorb point-solutions for platform problems  
-- Great engineering doesn't fix a broken product premise — and that's fine; the engineering stands alone
+Honest retrospective, kept because it's useful:
+
+- **PiP over full-screen.** A floating 320×480 panel would let you watch the response start streaming underneath — a gentler auto-close than a full-screen yank.
+- **Pre-bundled clips aren't an algorithmic feed.** Curated Pexels clips are a screensaver, not TikTok. That's also what makes the extension shippable (no scraping, no embeds, store-compliant).
+- **Streaks measure the habit, not the cure.** "🔥 7 breaks today" rewards getting distracted. A better metric: how fast you returned to your answer.
+- **Platforms absorb point solutions.** ChatGPT later shipped background notifications. The niche this fills now: you'd rather have something to watch than a notification to wait for.

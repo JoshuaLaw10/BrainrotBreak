@@ -1,5 +1,7 @@
 # Roadmap — Doombreak
 
+> **⚠️ SUPERSEDED 2026-07-13:** owner chose Chrome Web Store distribution after all, reversing Path A. See `STATE_AT_HANDOFF.md` for the live launch checklist. The analysis below is kept for the record.
+
 > **Status: Path A — portfolio wind-down.**  
 > The product was conceived before Claude and ChatGPT shipped native background/notify features. Those features absorbed the core use case. Continuing as a consumer product no longer makes sense. The engineering, however, is genuinely strong and stands on its own as a portfolio artifact.
 

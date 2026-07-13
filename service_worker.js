@@ -30,6 +30,23 @@ chrome.runtime.onInstalled.addListener(function(details) {
 });
 
 // ---------------------------------------------------------------------------
+// Keyboard command routing
+// The manifest registers "toggle-overlay" (Cmd/Ctrl+Shift+D). Chrome consumes
+// the keystroke before the page sees it, so the content script's keydown
+// fallback only fires if the command failed to register (shortcut conflict).
+// ---------------------------------------------------------------------------
+chrome.commands.onCommand.addListener(function(command) {
+  if (command !== 'toggle-overlay') return;
+  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+    if (!tabs || !tabs[0] || tabs[0].id === undefined) return;
+    chrome.tabs.sendMessage(tabs[0].id, { type: 'TOGGLE_OVERLAY' }, function() {
+      // Swallow "no receiving end" when the active tab isn't chatgpt.com.
+      void chrome.runtime.lastError;
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Message routing
 // ---------------------------------------------------------------------------
 chrome.runtime.onMessage.addListener(function(msg, _sender, sendResponse) {

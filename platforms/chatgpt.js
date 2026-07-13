@@ -42,6 +42,9 @@ var _STOP_SELECTORS = [
 var _STOP_FALLBACK_KEY = 'stop:composer-aria';
 
 var _TURN_SELECTOR_PARTS = [
+  // <section> observed on live chatgpt.com as of 2026-07 (fixture capture);
+  // <article>/<div> kept as fallbacks for older/alternate shells.
+  { key: 'turn:section-testid', sel: 'section[data-testid^="conversation-turn-"]' },
   { key: 'turn:article-testid', sel: 'article[data-testid^="conversation-turn-"]' },
   { key: 'turn:div-testid',     sel: 'div[data-testid^="conversation-turn-"]' },
 ];

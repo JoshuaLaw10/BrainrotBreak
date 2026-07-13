@@ -47,10 +47,7 @@ Works only on chatgpt.com.
 ### `storage`
 > Doomscroll Break uses `chrome.storage.local` to persist user preferences (on/off, mute, prompt-aware mode), a daily auto-close streak counter, and per-selector match telemetry that powers the popup health check. No data is transmitted externally.
 
-### `tabs`
-> The extension listens for tab visibility changes to pause the overlay heartbeat when the user switches away from ChatGPT, reducing unnecessary background processing. Tab content and URLs are not read.
-
-### `host_permissions: https://chatgpt.com/*`
+### Host access: `https://chatgpt.com/*` (content script match pattern)
 > A content script runs on chatgpt.com to observe the DOM via MutationObserver and detect when ChatGPT begins and finishes generating a response. This is the core function of the extension and requires direct page access. No page content is read, stored, or transmitted.
 
 ---

@@ -464,60 +464,123 @@ describe('_teardown()', () => {
     mod._teardown();
     expect(() => mod._teardown()).not.toThrow();
   });
+
+  it('resets the state machine to idle', () => {
+    mod._setState('thinking');
+    mod._setSuppressed(true);
+    mod._setLastSig(42);
+    mod._teardown();
+    expect(mod.getState()).toBe('idle');
+    expect(mod.isSuppressed()).toBe(false);
+    expect(mod.getLastSig()).toBe(0);
+  });
 });
 
 // ===========================================================================
-// Fixture-based tests (skipped until real ChatGPT DOM is captured)
-// Follow tests/fixtures/CAPTURE.md to replace the placeholder HTML files,
-// then remove the .skip to activate these tests.
+// _toggleOverlay (extension command + keyboard fallback)
+// ===========================================================================
+describe('_toggleOverlay()', () => {
+  it('hides a visible overlay and suppresses until generation ends', () => {
+    mod._setState('thinking');
+    mod._showOverlay();
+    mod._toggleOverlay();
+    expect(document.getElementById('doombreak-overlay')).toBeNull();
+    expect(mod.isSuppressed()).toBe(true);
+  });
+
+  it('re-shows the overlay while generating and suppressed', () => {
+    mod._setState('thinking');
+    mod._setSuppressed(true);
+    mod._toggleOverlay();
+    expect(document.getElementById('doombreak-overlay')).not.toBeNull();
+    expect(mod.isSuppressed()).toBe(false);
+  });
+
+  it('restores the badge to the current state on re-show', () => {
+    mod._setState('typing');
+    mod._setSuppressed(true);
+    mod._toggleOverlay();
+    expect(document.getElementById('doombreak-badge-text').textContent).toBe('Typing');
+  });
+
+  it('does nothing when idle with no overlay', () => {
+    mod._toggleOverlay();
+    expect(document.getElementById('doombreak-overlay')).toBeNull();
+  });
+
+  it('cannot show the overlay after teardown (disabled mid-generation)', () => {
+    mod._setState('thinking');
+    mod._teardown();
+    mod._toggleOverlay();
+    expect(document.getElementById('doombreak-overlay')).toBeNull();
+  });
+});// ===========================================================================
+// Fixture-based tests — run the REAL platform adapter against captured
+// ChatGPT DOM snapshots (see tests/fixtures/CAPTURE.md; captured 2026-07-13
+// from live chatgpt.com).
+//
+// Real-DOM note: in the earliest "thinking" moments the stop button exists
+// but conversation turns have NOT rendered yet — so turn-count and
+// last-user-prompt assertions run against the typing fixture, where turns
+// are present. Signature=0 on thinking is exactly what the state machine
+// relies on to distinguish thinking from typing.
 // ===========================================================================
 
-describe.skip('ChatGPT DOM fixture tests (pending capture)', () => {
-  // These 7 tests require real ChatGPT HTML captures.
-  // See tests/fixtures/CAPTURE.md for instructions.
+describe('ChatGPT DOM fixture tests', () => {
+  let RealChatGPT, idleDoc, thinkingDoc, typingDoc;
 
-  let idleDoc, thinkingDoc, typingDoc;
+  beforeEach(async () => {
+    const fs   = await import('node:fs');
+    const path = await import('node:path');
+    const dir  = path.join(__dirname, 'fixtures');
+    idleDoc     = fs.readFileSync(path.join(dir, 'chatgpt-idle.html'),     'utf8');
+    thinkingDoc = fs.readFileSync(path.join(dir, 'chatgpt-thinking.html'), 'utf8');
+    typingDoc   = fs.readFileSync(path.join(dir, 'chatgpt-typing.html'),   'utf8');
 
-  beforeEach(() => {
-    // TODO: load real captured HTML from fixtures/
-    // idleDoc    = fs.readFileSync('tests/fixtures/chatgpt-idle.html',     'utf8');
-    // thinkingDoc = fs.readFileSync('tests/fixtures/chatgpt-thinking.html', 'utf8');
-    // typingDoc  = fs.readFileSync('tests/fixtures/chatgpt-typing.html',   'utf8');
+    // Load the real adapter (not the stub used by the other tests).
+    vi.resetModules();
+    global.chrome = makeChromeStub();
+    const mod = await import('../platforms/chatgpt.js?fixture=' + Date.now());
+    RealChatGPT = mod.ChatGPT;
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
   });
 
   it('[fixture] detectGenerating() returns false on idle page', () => {
-    document.documentElement.innerHTML = idleDoc;
-    expect(ChatGPT.detectGenerating()).toBe(false);
+    document.body.innerHTML = idleDoc;
+    expect(RealChatGPT.detectGenerating()).toBe(false);
   });
 
   it('[fixture] detectGenerating() returns true on thinking page', () => {
-    document.documentElement.innerHTML = thinkingDoc;
-    expect(ChatGPT.detectGenerating()).toBe(true);
+    document.body.innerHTML = thinkingDoc;
+    expect(RealChatGPT.detectGenerating()).toBe(true);
   });
 
   it('[fixture] detectGenerating() returns true on typing page', () => {
-    document.documentElement.innerHTML = typingDoc;
-    expect(ChatGPT.detectGenerating()).toBe(true);
+    document.body.innerHTML = typingDoc;
+    expect(RealChatGPT.detectGenerating()).toBe(true);
   });
 
-  it('[fixture] getAssistantTurnCount() is > 0 on thinking page', () => {
-    document.documentElement.innerHTML = thinkingDoc;
-    expect(ChatGPT.getAssistantTurnCount()).toBeGreaterThan(0);
+  it('[fixture] getAssistantTurnCount() is > 0 on typing page', () => {
+    document.body.innerHTML = typingDoc;
+    expect(RealChatGPT.getAssistantTurnCount()).toBeGreaterThan(0);
   });
 
   it('[fixture] getAssistantSignature() is 0 at start of thinking', () => {
-    document.documentElement.innerHTML = thinkingDoc;
+    document.body.innerHTML = thinkingDoc;
     // Thinking = stop button present but no assistant text yet
-    expect(ChatGPT.getAssistantSignature()).toBe(0);
+    expect(RealChatGPT.getAssistantSignature()).toBe(0);
   });
 
   it('[fixture] getAssistantSignature() is > 0 when typing has started', () => {
-    document.documentElement.innerHTML = typingDoc;
-    expect(ChatGPT.getAssistantSignature()).toBeGreaterThan(0);
+    document.body.innerHTML = typingDoc;
+    expect(RealChatGPT.getAssistantSignature()).toBeGreaterThan(0);
   });
 
-  it('[fixture] getLastUserPrompt() returns non-empty string on thinking page', () => {
-    document.documentElement.innerHTML = thinkingDoc;
-    expect(ChatGPT.getLastUserPrompt().length).toBeGreaterThan(0);
+  it('[fixture] getLastUserPrompt() returns non-empty string on typing page', () => {
+    document.body.innerHTML = typingDoc;
+    expect(RealChatGPT.getLastUserPrompt().length).toBeGreaterThan(0);
   });
 });

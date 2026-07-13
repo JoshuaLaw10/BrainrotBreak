@@ -8,7 +8,9 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "feed": "node scripts/generate-feed.mjs",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "source": "node scripts/source-clips.mjs",
+    "package": "node scripts/package.mjs"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.6.0",

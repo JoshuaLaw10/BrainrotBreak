@@ -466,24 +466,39 @@ function _teardown() {
   if (_observer) { _observer.disconnect(); _observer = null; }
   if (_cooldownTimer) { clearTimeout(_cooldownTimer); _cooldownTimer = null; }
   _hideOverlay();
+  document.removeEventListener('keydown', _onKeyDown);
+  // Reset the state machine so a toggle message arriving while disabled
+  // can't resurrect the overlay (_toggleOverlay is a no-op from idle).
+  _state             = 'idle';
+  _suppressUntilDone = false;
+  _lastSignature     = 0;
 }
 
 // ---------------------------------------------------------------------------
-// Keyboard shortcut (Command/Ctrl+Shift+D)
+// Overlay toggle — shared by the extension command (via service worker
+// message) and the in-page keyboard fallback.
 // ---------------------------------------------------------------------------
 
+function _toggleOverlay() {
+  if (_overlayEl) {
+    _suppressUntilDone = true;
+    _nextSlogan();
+    _hideOverlay();
+  } else if (_state !== 'idle') {
+    // Re-show overlay if generating but suppressed
+    _suppressUntilDone = false;
+    _showOverlay();
+    _setBadge(_state === 'typing' ? 'typing' : 'thinking');
+  }
+}
+
+// Keyboard fallback (Command/Ctrl+Shift+D). Only reachable when the manifest
+// command failed to register (e.g. shortcut conflict), since Chrome consumes
+// registered command keystrokes before the page sees them.
 function _onKeyDown(e) {
   var mod = e.metaKey || e.ctrlKey;
-  if (mod && e.shiftKey && (e.key === 'd' || e.key === 'D')) {
-    if (_overlayEl) {
-      _suppressUntilDone = true;
-      _nextSlogan();
-      _hideOverlay();
-    } else if (_state !== 'idle') {
-      // Re-show overlay if generating but suppressed
-      _suppressUntilDone = false;
-      _showOverlay();
-    }
+  if (mod && e.shiftKey && !e.altKey && (e.key === 'd' || e.key === 'D')) {
+    _toggleOverlay();
   }
 }
 
@@ -508,8 +523,19 @@ function _boot() {
   });
 }
 
-// Tear down if the page unloads
-window.addEventListener('unload', _teardown);
+// Tear down when the page is hidden for navigation ('unload' is deprecated
+// and blocks back/forward cache). Re-boot on bfcache restore.
+window.addEventListener('pagehide', _teardown);
+window.addEventListener('pageshow', function(e) {
+  if (e.persisted) _boot();
+});
+
+// Toggle command relayed by the service worker (chrome.commands)
+if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+  chrome.runtime.onMessage.addListener(function(msg) {
+    if (msg && msg.type === 'TOGGLE_OVERLAY') _toggleOverlay();
+  });
+}
 
 // Listen for storage changes (toggling enabled/promptMode from popup)
 if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
@@ -558,6 +584,7 @@ if (typeof module !== 'undefined') {
     _autoClose:     _autoClose,
     _boot:          _boot,
     _teardown:      _teardown,
+    _toggleOverlay: _toggleOverlay,
 
     // Test helpers
     _resetForTest: function() {

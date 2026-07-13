@@ -14,7 +14,7 @@ A Chrome extension (MV3) that shows a self-closing video overlay on chatgpt.com 
 
 ---
 
-## Current state (as of 2026-05-24)
+## Current state (as of 2026-07-13)
 
 ### ✅ Done
 
@@ -33,7 +33,13 @@ A Chrome extension (MV3) that shows a self-closing video overlay on chatgpt.com 
 | `icons/icon.svg` | Complete — brain + play button design |
 | `icons/icon-{16,32,48,128}.png` | ✅ Generated and committed |
 | `manifest.json` | Complete — v1.0.0, MV3, correct permissions |
-| Test suite | **79 passing, 7 skipped** — baseline locked |
+| Test suite | **92 passing, 0 skipped** — baseline locked; includes 7 real-DOM fixture tests |
+| `scripts/source-clips.mjs` | Complete — Pexels API downloader (needs free `PEXELS_API_KEY`), compresses via ffmpeg, writes metadata.json |
+| `scripts/package.mjs` | Complete — validates + builds `dist/doombreak-vX.Y.Z.zip` for store upload (`npm run package`) |
+| GitHub Pages | ✅ Enabled 2026-07-13 — privacy policy at https://joshualaw10.github.io/DoomBreak/privacy.html |
+| Keyboard command | ✅ Wired 2026-07-13 — `chrome.commands.onCommand` → message → content script (was declared but dead) |
+| Permissions | ✅ Trimmed 2026-07-13 — unused `tabs` + redundant `host_permissions` removed from manifest, listing, privacy docs |
+| Feed schema bug | ✅ Fixed 2026-07-13 — generate-feed.mjs emitted legacy `src`/`platform` keys; overlay reads `file`. Verified end-to-end with synthetic clips |
 | `PRIVACY.md` | Complete — plain text version |
 | `docs/privacy.html` | Complete — GitHub Pages version (needs Pages enabled in repo settings) |
 | `STORE_LISTING.md` | Complete — short desc, long desc, permission justifications, screenshot shot list |
@@ -47,23 +53,23 @@ A Chrome extension (MV3) that shows a self-closing video overlay on chatgpt.com 
 
 These **cannot be done by code alone** — they require a browser or physical action:
 
-### 1. Enable GitHub Pages (5 min)
-Go to: **github.com/JoshuaLaw10/DoomBreak → Settings → Pages**  
-Set source: **Deploy from branch → `main` → `/docs`**  
-This publishes the privacy policy at:  
-`https://joshuaLaw10.github.io/DoomBreak/privacy.html`
+### 1. ~~Enable GitHub Pages~~ ✅ Done 2026-07-13 via `gh api`
+Privacy policy live at `https://joshualaw10.github.io/DoomBreak/privacy.html`.
 
-### 2. Capture real ChatGPT DOM fixtures (1–2 hours)
-Follow `tests/fixtures/CAPTURE.md`. You need a logged-in ChatGPT session.  
-Replace the 3 placeholder HTML files with real page captures.  
-This activates the 7 skipped tests — **critical path** for validating that `platforms/chatgpt.js` works against the real DOM.  
-If any of the 7 newly-activated tests fail, fix the selectors in `platforms/chatgpt.js` only.
+### 2. ~~Capture real ChatGPT DOM fixtures~~ ✅ Done 2026-07-13
+Captured from live chatgpt.com via Playwright (logged-out chat flow). All 7 fixture
+tests active and passing. They caught real drift: conversation turns are now
+`<section data-testid="conversation-turn-N">` (was `<article>`) — fixed in
+`platforms/chatgpt.js`. Real-DOM note: during earliest "thinking", the stop button
+exists but NO turns are rendered yet (signature=0 is what distinguishes thinking).
 
-### 3. Source 80 clips (several hours)
-Follow `docs/SOURCING.md`. Pexels/Pixabay/Mixkit **only**.  
-Place clips in `media/`, fill in `metadata.json` (copy from `metadata.template.json`).  
-Then run: `npm run feed` to validate + regenerate `data/feed.js`.  
-**DO NOT use YouTube/TikTok/Instagram** — instant Chrome Web Store rejection.
+### 3. Source clips (~15 min, was several hours)
+Get a free key at https://www.pexels.com/api/ then:
+```
+PEXELS_API_KEY=xxx npm run source -- --per-tag 16   # 80 clips
+npm run feed                                        # validate + regenerate data/feed.js
+```
+Pexels only (script enforces this). **DO NOT add YouTube/TikTok/Instagram clips** — instant Chrome Web Store rejection.
 
 ### 4. Take 5 screenshots (30 min)
 1280×800 each. Shot list is in `STORE_LISTING.md`.  
@@ -120,9 +126,7 @@ Priority 7: Submit
 
 ```
 Test Files  2 passed (2)
-     Tests  79 passed | 7 skipped (86)
+     Tests  92 passed (92)
 ```
 
-The 7 skipped tests are in `tests/doombreak.test.js` inside a `describe.skip('ChatGPT DOM fixture tests...')` block. Remove the `.skip` only after replacing the placeholder fixture HTML files.
-
-**Never let the passing count drop below 79.** Every new behaviour gets new tests.
+**Never let the passing count drop below 92.** Every new behaviour gets new tests.

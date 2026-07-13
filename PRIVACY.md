@@ -45,8 +45,7 @@ Doomscroll Break makes **zero network requests**. All video clips are bundled wi
 | Permission | Why it's needed |
 |---|---|
 | `storage` | To read and write the preference/telemetry keys listed above |
-| `tabs` | To detect when you switch away from ChatGPT, so the overlay timer can pause gracefully |
-| `host_permissions: chatgpt.com` | The content script must run on chatgpt.com to observe the DOM and detect generation state |
+| Content script on `chatgpt.com` | The content script must run on chatgpt.com to observe the DOM and detect generation state |
 
 ---
 

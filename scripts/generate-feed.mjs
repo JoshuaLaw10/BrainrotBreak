@@ -181,8 +181,7 @@ const sortedFiles = [...mediaFiles].sort();
 const feedEntries = sortedFiles.map(filename => {
   const m = metadata[filename];
   return {
-    src:      'media/' + filename,
-    platform: 'SHORTS',
+    file:     filename,
     tags:     m.tags || [],
     creator:  m.creator,
     title:    m.title,
@@ -208,7 +207,7 @@ const lines = [
 
 for (const entry of feedEntries) {
   lines.push('  {');
-  lines.push(`    src: ${JSON.stringify(entry.src)}, platform: ${JSON.stringify(entry.platform)},`);
+  lines.push(`    file: ${JSON.stringify(entry.file)},`);
   lines.push(`    tags: ${JSON.stringify(entry.tags)},`);
   lines.push(`    creator: ${JSON.stringify(entry.creator)}, title: ${JSON.stringify(entry.title)},`);
   lines.push(`    license: ${JSON.stringify(entry.license)}, source: ${JSON.stringify(entry.source)},`);
@@ -223,7 +222,7 @@ lines.push('// Validate at load time so bad entries fail loudly during developme
 lines.push("if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {");
 lines.push("  var _validTags = new Set(['calm', 'funny', 'sport', 'focus']);");
 lines.push('  FEED.forEach(function(item, i) {');
-lines.push("    if (!item.src) throw new Error('FEED[' + i + ']: missing src');");
+lines.push("    if (!item.file) throw new Error('FEED[' + i + ']: missing file');");
 lines.push("    if (!item.creator) throw new Error('FEED[' + i + ']: missing creator');");
 lines.push("    if (!item.title) throw new Error('FEED[' + i + ']: missing title');");
 lines.push("    if (!item.license) throw new Error('FEED[' + i + ']: missing license');");
