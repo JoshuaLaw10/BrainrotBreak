@@ -53,7 +53,7 @@ try {
   await composer.waitFor({ state: 'visible', timeout: 45000 });
   await page.keyboard.press('Escape').catch(() => {});
   await composer.click();
-  await page.keyboard.type('Write a 600 word essay about the history of mapmaking.', { delay: 10 });
+  await page.keyboard.type('Write a detailed 1500 word essay about the history of mapmaking across every era.', { delay: 10 });
   await page.keyboard.press('Enter');
 
   const overlay = page.locator('#doombreak-overlay');
@@ -82,17 +82,12 @@ try {
   check('clips are playing', playing.playing === playing.count, playing.playing + '/' + playing.count);
   check('clips muted by default', playing.muted);
 
-  // Sound toggle — audio comes from exactly one panel (the target)
-  await page.click('#doombreak-sound');
-  const unmutedCount = await page.evaluate(() =>
-    [...document.querySelectorAll('#doombreak-overlay video')].filter(v => !v.muted).length);
-  check('sound toggle unmutes exactly one panel', unmutedCount === 1, unmutedCount + ' unmuted');
-  await page.click('#doombreak-sound'); // back to muted
-
+  if (!(await overlay.count())) console.log('  ⚠ overlay closed early — interactive checks may be skipped');
   // Scroll-to-advance: real wheel gesture over the middle panel swaps the clip
   const beforeScroll = await page.evaluate(() =>
     document.querySelectorAll('#doombreak-overlay .db-panel')[1].querySelector('video').getAttribute('data-file'));
-  const panelBox = await page.locator('#doombreak-overlay .db-panel').nth(1).boundingBox();
+  const panelBox = await page.locator('#doombreak-overlay .db-panel').nth(1).boundingBox().catch(() => null);
+  if (!panelBox) throw new Error('overlay closed before scroll check — rerun (generation ended too fast)');
   await page.mouse.move(panelBox.x + panelBox.width / 2, panelBox.y + panelBox.height / 2);
   await page.mouse.wheel(0, 300);
   await page.waitForTimeout(600);
@@ -106,6 +101,14 @@ try {
     document.querySelectorAll('#doombreak-overlay .db-panel')[1].querySelector('video').getAttribute('data-file'));
   check('wheel up scrolls back through history', backScroll === beforeScroll,
     'returned to ' + backScroll);
+
+  // Sound toggle — audio comes from exactly one panel (the target)
+  await page.click('#doombreak-sound');
+  const unmutedCount = await page.evaluate(() =>
+    [...document.querySelectorAll('#doombreak-overlay video')].filter(v => !v.muted).length);
+  check('sound toggle unmutes exactly one panel', unmutedCount === 1, unmutedCount + ' unmuted');
+  await page.click('#doombreak-sound'); // back to muted
+
 
   // SHOT 3 — Typing badge
   await page.waitForFunction(() => {

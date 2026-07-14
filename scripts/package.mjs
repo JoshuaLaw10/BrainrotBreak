@@ -68,7 +68,7 @@ if (errors.length) {
 
 const version = manifest.version;
 const distDir = join(ROOT, 'dist');
-const zipPath = join(distDir, 'doombreak-v' + version + '.zip');
+const zipPath = join(distDir, 'brainrot-break-v' + version + '.zip');
 mkdirSync(distDir, { recursive: true });
 rmSync(zipPath, { force: true });
 
@@ -79,6 +79,6 @@ const mediaFiles = existsSync(join(ROOT, 'media'))
 execFileSync('zip', ['-q', zipPath, ...SHIP, ...mediaFiles], { cwd: ROOT });
 
 const mb = (statSync(zipPath).size / 1024 / 1024).toFixed(2);
-console.log('✓ dist/doombreak-v' + version + '.zip (' + mb + ' MB, ' +
+console.log('✓ dist/brainrot-break-v' + version + '.zip (' + mb + ' MB, ' +
   (SHIP.length + mediaFiles.length) + ' files, ' + clipFiles.length + ' clips in feed)');
 if (FORCE && !clipFiles.length) console.log('⚠ dev build: feed is empty — NOT suitable for store upload.');

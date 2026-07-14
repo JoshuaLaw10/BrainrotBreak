@@ -165,7 +165,7 @@ The result: 79 tests that run in under 800ms, test the full state machine, mock 
 
 ## Code
 
-**Repo:** [github.com/JoshuaLaw10/DoomBreak](https://github.com/JoshuaLaw10/DoomBreak)
+**Repo:** [github.com/JoshuaLaw10/BrainrotBreak](https://github.com/JoshuaLaw10/BrainrotBreak)
 
 Key files to read in order:
 1. [`platforms/chatgpt.js`](../platforms/chatgpt.js) — adapter pattern + telemetry (~280 lines, fully commented)
@@ -174,7 +174,7 @@ Key files to read in order:
 4. [`tests/telemetry.test.js`](../tests/telemetry.test.js) — telemetry unit tests
 
 ```bash
-git clone https://github.com/JoshuaLaw10/DoomBreak
+git clone https://github.com/JoshuaLaw10/BrainrotBreak
 cd DoomBreak
 npm install
 npx vitest run   # 79 passing, 7 skipped

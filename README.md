@@ -1,10 +1,10 @@
-# 🧠 Doomscroll Break
+# 🧠 Brainrot Break
 
-**Doomscroll intentionally while ChatGPT thinks. Auto-closes the moment your answer is ready.**
+**Cat & dog reels (and calmer things) while ChatGPT thinks. Auto-closes the moment your answer is ready.**
 
-When ChatGPT is generating, you instinctively open a new tab and start scrolling — and don't come back. Doomscroll Break doesn't fight the habit; it contains it. The moment ChatGPT starts generating, a full-screen short-clip overlay opens. The moment your answer is ready, it closes itself. No discipline required.
+When ChatGPT is generating, you instinctively open a new tab and start scrolling — and don't come back. Brainrot Break doesn't fight the habit; it contains it. The moment ChatGPT starts generating, a full-screen short-clip overlay opens. The moment your answer is ready, it closes itself. No discipline required.
 
-**[Technical writeup](docs/WRITEUP.md) · [Privacy policy](https://joshualaw10.github.io/DoomBreak/privacy.html) · [Original pitch](docs/ORIGINAL_PITCH.md)**
+**[Technical writeup](docs/WRITEUP.md) · [Privacy policy](https://joshualaw10.github.io/BrainrotBreak/privacy.html) · [Original pitch](docs/ORIGINAL_PITCH.md)**
 
 ---
 
@@ -24,8 +24,8 @@ When ChatGPT is generating, you instinctively open a new tab and start scrolling
 From source (Chrome Web Store listing pending):
 
 ```bash
-git clone https://github.com/JoshuaLaw10/DoomBreak
-cd DoomBreak
+git clone https://github.com/JoshuaLaw10/BrainrotBreak
+cd BrainrotBreak
 PEXELS_API_KEY=xxx npm run source   # download clips (free key: pexels.com/api)
 npm run feed                        # validate + generate data/feed.js
 ```
@@ -36,7 +36,7 @@ Then `chrome://extensions` → enable Developer Mode → "Load unpacked" → sel
 
 ## The engineering
 
-ChatGPT's DOM changes frequently and without notice. Most extensions that scrape it break silently — users find out before the developer does. Doomscroll Break was built around that problem, and the patterns below are the interesting part of this repo.
+ChatGPT's DOM changes frequently and without notice. Most extensions that scrape it break silently — users find out before the developer does. Brainrot Break was built around that problem, and the patterns below are the interesting part of this repo.
 
 ### Platform adapter pattern
 
@@ -177,7 +177,7 @@ npm run package         # build dist/doombreak-vX.Y.Z.zip for the store
 
 ## Privacy
 
-Zero network requests at runtime. All data stays in `chrome.storage.local`. See the [privacy policy](https://joshualaw10.github.io/DoomBreak/privacy.html) for the full storage key listing.
+Zero network requests at runtime. All data stays in `chrome.storage.local`. See the [privacy policy](https://joshualaw10.github.io/BrainrotBreak/privacy.html) for the full storage key listing.
 
 ---
 

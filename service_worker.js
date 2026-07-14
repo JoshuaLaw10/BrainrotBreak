@@ -1,6 +1,6 @@
 // service_worker.js
 // ============================================================
-// Doomscroll Break — background service worker (MV3).
+// Brainrot Break — background service worker (MV3).
 //
 // Responsibilities:
 //   1. Initialise chrome.storage.local on first install.

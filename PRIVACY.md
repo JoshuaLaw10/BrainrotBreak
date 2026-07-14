@@ -1,10 +1,10 @@
-# Privacy Policy — Doomscroll Break
+# Privacy Policy — Brainrot Break
 
 **Last updated: 2026-05-24**
 
 ## Summary
 
-Doomscroll Break stores a small amount of data **locally on your device only**. No data is ever transmitted to any server. No analytics. No tracking. No third-party services.
+Brainrot Break stores a small amount of data **locally on your device only**. No data is ever transmitted to any server. No analytics. No tracking. No third-party services.
 
 ---
 
@@ -36,7 +36,7 @@ All data is stored exclusively in `chrome.storage.local` — a sandboxed, device
 
 ## Network access
 
-Doomscroll Break makes **zero network requests**. All video clips are bundled with the extension as local MP4 files. The extension communicates only with `chatgpt.com` pages via a content script (to detect generation state) — it does not send any data to or from those pages.
+Brainrot Break makes **zero network requests**. All video clips are bundled with the extension as local MP4 files. The extension communicates only with `chatgpt.com` pages via a content script (to detect generation state) — it does not send any data to or from those pages.
 
 ---
 
@@ -60,4 +60,4 @@ Doomscroll Break makes **zero network requests**. All video clips are bundled wi
 ## Contact
 
 If you have questions about this policy, open an issue at:  
-**https://github.com/JoshuaLaw10/DoomBreak/issues**
+**https://github.com/JoshuaLaw10/BrainrotBreak/issues**

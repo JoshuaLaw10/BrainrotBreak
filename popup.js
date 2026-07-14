@@ -1,6 +1,6 @@
 // popup.js
 // ============================================================
-// Doomscroll Break — popup controller.
+// Brainrot Break — popup controller.
 //
 // Reads / writes chrome.storage.local for:
 //   enabled       — master on/off toggle

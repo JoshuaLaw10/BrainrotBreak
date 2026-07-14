@@ -6,7 +6,7 @@
   "Touch grass in 3… 2… 1…",
   "Your answer is marinating.",
   "ChatGPT is thinking. You're scrolling. This is fine.",
-  "Doomscrolling, but make it intentional.",
+  "Brainrot, but make it intentional.",
   "Attention span: loading…",
   "The AI is doing its thing. So are you.",
   "Back in a moment. Or not. Who knows.",

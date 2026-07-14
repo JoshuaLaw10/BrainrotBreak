@@ -5,39 +5,53 @@
 
 ---
 
-## Short description
-*(≤ 132 characters — currently 126)*
+## Store title
+*(This is the manifest `name` — highest-weight search field)*
 
 ```
-Doomscroll intentionally while ChatGPT thinks. Auto-closes the moment your answer is ready. No discipline required.
+Brainrot Break: Cat & Dog Reels While ChatGPT Thinks
+```
+
+## Short description
+*(≤ 132 characters — currently 121; second-highest search weight)*
+
+```
+Cat videos, dog reels, calm scenery & sports while ChatGPT or Gemini thinks. Auto-closes the moment your answer is ready.
 ```
 
 ---
 
 ## Detailed description
-*(Plain text, ~1000 characters — currently ~970)*
+*(Plain text — every vibe named for store search indexing)*
 
 ```
-Doomscroll Break solves a specific problem: when ChatGPT is generating, you instinctively open YouTube or TikTok — and don't come back.
+Brainrot Break solves a specific problem: when ChatGPT or Gemini is generating, you instinctively open YouTube or TikTok — and don't come back.
 
-Instead of fighting that habit, Doomscroll Break works with it.
+Instead of fighting that habit, Brainrot Break works with it. The moment the AI starts thinking, a reel overlay opens. Scroll cat videos while you wait. The moment your answer is ready, it closes itself — no tap required.
+
+PICK YOUR VIBE
+🐱 Cats — cat videos and kitten clips, nothing else (yes, there's a cats-only button)
+🐶 Dogs — puppies, goldens, happy dogs at the beach
+😂 Funny — funny animal reels and absurd moments
+🌊 Calm — ocean waves, rain on glass, forest streams
+🏀 Sport — basketball, skateboarding, surfing highlights
+🎯 Focus — keyboards, coffee pours, study ambience
+Pick one, mix a few, or leave them all on for variety.
 
 HOW IT WORKS
-Enable the extension, then send any prompt on chatgpt.com. Doomscroll Break instantly opens a full-screen short-clip overlay. Watch, scroll, relax. The moment ChatGPT finishes generating your response, the overlay closes automatically — no tap required.
+Send any prompt on chatgpt.com or gemini.google.com. Brainrot Break opens instantly. Scroll with your wheel or trackpad to snap to the next reel — scroll up to go back. When the AI finishes generating, the overlay auto-closes and you're back at your answer.
 
 FEATURES
-• Auto-closes the instant ChatGPT is done — you never miss your answer
+• Auto-closes the instant your answer is ready — you never miss it
+• Scrollable reels — wheel or swipe to the next clip, scroll up for history
+• Mini Player mode — a small corner player instead of full-screen
+• Prompt-Aware Mode (on by default): ask about workouts, get sports clips; ask something calm, get calm scenery
 • Live status badge shows Thinking → Typing as the response develops
-• Scroll the reels — wheel or swipe snaps to the next clip, scroll up to go back
-• Vibe picker: choose what plays — 😂 Funny, 🌊 Calm, 🏀 Sport, 🎯 Focus, 🐱 Cats, 🐶 Dogs
-• Mini Player mode: a small corner overlay instead of full-screen
-• Prompt-Aware Mode (on by default): ask about sports, get sports clips; ask for something calm, get calm clips
-• Daily streak counter tracks how many times it pulled you back today
-• Sound toggle and keyboard shortcut (Cmd/Ctrl+Shift+D)
-• Popup health check warns you if ChatGPT's DOM has changed and detection might be affected
+• Daily streak counter, sound toggle, keyboard shortcut (Cmd/Ctrl+Shift+D)
+• Selector health check warns you if the AI site changed its page structure
 
 PRIVACY
-100% local. No data leaves your device. No analytics. No servers. All clips are bundled with the extension — no network requests are ever made.
+100% local. No data leaves your device. No analytics. No servers. All clips are bundled with the extension — zero network requests, ever.
 
 Works on chatgpt.com and gemini.google.com.
 ```
@@ -48,7 +62,7 @@ Works on chatgpt.com and gemini.google.com.
 *(For the "Permissions" section of the submission form)*
 
 ### `storage`
-> Doomscroll Break uses `chrome.storage.local` to persist user preferences (on/off, mute, prompt-aware mode), a daily auto-close streak counter, and per-selector match telemetry that powers the popup health check. No data is transmitted externally.
+> Brainrot Break uses `chrome.storage.local` to persist user preferences (on/off, mute, prompt-aware mode), a daily auto-close streak counter, and per-selector match telemetry that powers the popup health check. No data is transmitted externally.
 
 ### Host access: `https://chatgpt.com/*` and `https://gemini.google.com/*` (content script match patterns)
 > A content script runs on chatgpt.com and gemini.google.com to observe the DOM via MutationObserver and detect when the AI begins and finishes generating a response. This is the core function of the extension and requires direct page access. No page content is read, stored, or transmitted.
@@ -64,7 +78,7 @@ Works on chatgpt.com and gemini.google.com.
 | Regions | All regions |
 | Pricing | Free |
 | Mature content | No |
-| Single purpose | Detects ChatGPT generation state and shows a self-closing video overlay |
+| Single purpose | Detects AI generation state and shows a self-closing, scrollable reel overlay |
 
 ---
 

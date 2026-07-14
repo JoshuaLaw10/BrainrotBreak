@@ -1,4 +1,4 @@
-# State at Handoff — Doomscroll Break
+# State at Handoff — Brainrot Break (formerly Doomscroll Break)
 
 > **Read this first in every new session.**  
 > It is the authoritative source of what's done, what's next, and where skeletons are buried.
@@ -9,8 +9,8 @@
 
 A Chrome extension (MV3) that shows a self-closing video overlay on chatgpt.com while ChatGPT is generating. The overlay closes automatically when the answer is ready. Targets Chrome Web Store submission.
 
-**Repo:** https://github.com/JoshuaLaw10/DoomBreak  
-**Privacy policy (live after GitHub Pages setup):** https://joshuaLaw10.github.io/DoomBreak/privacy.html
+**Repo:** https://github.com/JoshuaLaw10/BrainrotBreak  
+**Privacy policy (live after GitHub Pages setup):** https://joshuaLaw10.github.io/BrainrotBreak/privacy.html
 
 ---
 
@@ -36,7 +36,7 @@ A Chrome extension (MV3) that shows a self-closing video overlay on chatgpt.com 
 | Test suite | **92 passing, 0 skipped** — baseline locked; includes 7 real-DOM fixture tests |
 | `scripts/source-clips.mjs` | Complete — Pexels API downloader (needs free `PEXELS_API_KEY`), compresses via ffmpeg, writes metadata.json |
 | `scripts/package.mjs` | Complete — validates + builds `dist/doombreak-vX.Y.Z.zip` for store upload (`npm run package`) |
-| GitHub Pages | ✅ Enabled 2026-07-13 — privacy policy at https://joshualaw10.github.io/DoomBreak/privacy.html |
+| GitHub Pages | ✅ Enabled 2026-07-13 — privacy policy at https://joshualaw10.github.io/BrainrotBreak/privacy.html |
 | Keyboard command | ✅ Wired 2026-07-13 — `chrome.commands.onCommand` → message → content script (was declared but dead) |
 | Permissions | ✅ Trimmed 2026-07-13 — unused `tabs` + redundant `host_permissions` removed from manifest, listing, privacy docs |
 | Feed schema bug | ✅ Fixed 2026-07-13 — generate-feed.mjs emitted legacy `src`/`platform` keys; overlay reads `file`. Verified end-to-end with synthetic clips |
@@ -51,7 +51,9 @@ A Chrome extension (MV3) that shows a self-closing video overlay on chatgpt.com 
 
 ## 🔴 Blocked on human action
 
-**Only step 6/7 remain: create the $5 dev account and submit.** Upload `dist/doombreak-v1.1.0.zip` (rebuild anytime with `npm run package`), paste copy from `STORE_LISTING.md`, pick 5 of the 6 screenshots in `store-assets/`, privacy URL: https://joshualaw10.github.io/DoomBreak/privacy.html
+**v1.4.0 (2026-07-15): RENAMED to "Brainrot Break: Cat & Dog Reels While ChatGPT Thinks"** for store search (brainrot/cat/dog/reels/ChatGPT keywords). Repo renamed → github.com/JoshuaLaw10/BrainrotBreak (old URLs redirect for git, NOT for Pages). Privacy URL is now https://joshualaw10.github.io/BrainrotBreak/privacy.html (verified 200). Listing copy fans every vibe as a search phrase (PICK YOUR VIBE section). Sound made DOM-driven (outgoing swap video can never stay audible). Internal `doombreak-*` DOM ids intentionally unchanged. SUBMIT dist/brainrot-break-v1.4.0.zip.
+
+**Only step 6/7 remain: create the $5 dev account and submit.** Upload `dist/doombreak-v1.1.0.zip` (rebuild anytime with `npm run package`), paste copy from `STORE_LISTING.md`, pick 5 of the 6 screenshots in `store-assets/`, privacy URL: https://joshualaw10.github.io/BrainrotBreak/privacy.html
 
 **v1.2.0 (2026-07-14): GEMINI SUPPORT VERIFIED LIVE.** Platform registry (window.Platform) + gemini.google.com adapter — overlay appeared/auto-closed on real Gemini (logged-out chat works, fully reproducible via `npm run verify:gemini`); fixtures in tests/fixtures/gemini-*.html, 8 fixture tests. claude.ai adapter remains an UNVERIFIED draft (user skipped login verification): file kept in platforms/claude.js, but claude.ai is NOT in the manifest — re-add only after `npm run verify:claude` passes. Store zip: dist/doombreak-v1.2.0.zip. Submission copy in STORE_LISTING.md covers both hosts.
 
@@ -60,7 +62,7 @@ A Chrome extension (MV3) that shows a self-closing video overlay on chatgpt.com 
 These **cannot be done by code alone** — they require a browser or physical action:
 
 ### 1. ~~Enable GitHub Pages~~ ✅ Done 2026-07-13 via `gh api`
-Privacy policy live at `https://joshualaw10.github.io/DoomBreak/privacy.html`.
+Privacy policy live at `https://joshualaw10.github.io/BrainrotBreak/privacy.html`.
 
 ### 2. ~~Capture real ChatGPT DOM fixtures~~ ✅ Done 2026-07-13
 Captured from live chatgpt.com via Playwright (logged-out chat flow). All 7 fixture

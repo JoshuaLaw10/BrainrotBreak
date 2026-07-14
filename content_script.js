@@ -1,6 +1,6 @@
 // content_script.js
 // ============================================================
-// Doomscroll Break — main content script.
+// Brainrot Break — main content script.
 //
 // Loaded after (manifest.json load order):
 //   data/keywords.js   → window.KEYWORDS
@@ -209,7 +209,7 @@ function _buildOverlay(clips) {
   el.id = 'doombreak-overlay';
   if (_overlayMode === 'pip') el.className = 'db-pip';
   el.setAttribute('role', 'dialog');
-  el.setAttribute('aria-label', 'Doomscroll Break');
+  el.setAttribute('aria-label', 'Brainrot Break');
 
   var panelTarget = _overlayMode === 'pip' ? 1 : PANEL_COUNT;
 
@@ -281,7 +281,7 @@ function _buildOverlay(clips) {
     '</style>',
 
     '<div id="doombreak-header">',
-    '  <span id="doombreak-title">🧠 Doomscroll Break</span>',
+    '  <span id="doombreak-title">🧠 Brainrot Break</span>',
     '  <span id="doombreak-slogan">' + _escHtml(_currentSlogan()) + '</span>',
     '  <div id="doombreak-badge">',
     '    <div id="doombreak-badge-dot"></div>',
@@ -398,6 +398,7 @@ function _advanceReel(idx, dir, requireAudio) {
     } else {
       cur.remove();
     }
+    cur.muted = true; // outgoing video must never stay audible
     cur.pause();
     cur.removeAttribute('src');
     try { cur.load(); } catch (_) {}
@@ -569,10 +570,15 @@ function _setBadge(state) {
 function _applySound() {
   var soundBtn = document.getElementById('doombreak-sound');
   // Audio plays from ONE panel — the last one interacted with (centre by
-  // default). Unmuting all three at once is noise, not sound.
-  _videos.forEach(function(v, i) {
-    if (v) v.muted = !(_soundOn && i === _soundIdx);
-  });
+  // default). Drive muting from the DOM, not the tracked array: during a
+  // reel swap the outgoing video is still attached for ~220ms and must
+  // never be left audible.
+  if (_overlayEl) {
+    var all = _overlayEl.querySelectorAll('video');
+    for (var i = 0; i < all.length; i++) all[i].muted = true;
+  }
+  var target = _videos[_soundIdx];
+  if (target && _soundOn) target.muted = false;
   if (soundBtn) soundBtn.textContent = _soundOn ? '🔊 Sound' : '🔇 Sound';
 }
 

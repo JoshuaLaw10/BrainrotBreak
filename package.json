@@ -1,7 +1,7 @@
 {
-  "name": "doombreak",
-  "version": "1.3.1",
-  "description": "Chrome extension: intentional doomscrolling while ChatGPT thinks.",
+  "name": "brainrot-break",
+  "version": "1.4.0",
+  "description": "Chrome extension: cat & dog reels (and more) while ChatGPT or Gemini thinks.",
   "private": true,
   "scripts": {
     "test": "vitest run",

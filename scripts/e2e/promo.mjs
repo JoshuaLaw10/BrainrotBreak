@@ -49,8 +49,8 @@ const tile = `${base}
   <div class="txt" style="display:flex;align-items:center;gap:22px;">
     <img class="icon" src="${icon}" width="92" height="92" />
     <div>
-      <h1 style="font-size:34px;line-height:1.05;">Doomscroll<br/>Break</h1>
-      <p style="font-size:14.5px;margin-top:8px;">Scroll while ChatGPT thinks.<br/>Closes when your answer is ready.</p>
+      <h1 style="font-size:34px;line-height:1.05;">Brainrot<br/>Break</h1>
+      <p style="font-size:14.5px;margin-top:8px;">Cat &amp; dog reels while<br/>ChatGPT thinks. Self-closing.</p>
     </div>
   </div>
 </div>`;
@@ -60,8 +60,8 @@ const marquee = `${base}
   <div class="glow" style="width:420px;height:420px;background:#6366f1;top:-140px;right:180px;"></div>
   <div class="txt" style="flex:1;">
     <img class="icon" src="${icon}" width="96" height="96" />
-    <h1 style="font-size:54px;line-height:1.04;margin-top:26px;">Doomscroll intentionally<br/>while ChatGPT thinks.</h1>
-    <p style="font-size:22px;margin-top:16px;">Auto-closes the moment your answer is ready.<br/>No discipline required.</p>
+    <h1 style="font-size:54px;line-height:1.04;margin-top:26px;">Brainrot while<br/>ChatGPT thinks.</h1>
+    <p style="font-size:22px;margin-top:16px;">Cat reels, dog reels, calm scenery, sports — scrollable.<br/>Auto-closes the moment your answer is ready.</p>
     <div style="margin-top:22px;display:flex;gap:10px;">
       <span class="badge" style="padding:8px 16px;font-size:14px;"><span class="dot"></span>Auto-close</span>
       <span class="badge" style="padding:8px 16px;font-size:14px;">😂🌊🏀🎯🐱🐶 Vibes</span>
