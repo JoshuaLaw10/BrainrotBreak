@@ -35,6 +35,8 @@ var STREAK_STORAGE_KEY  = 'autoCloseStreak';
 var SOUND_STORAGE_KEY   = 'soundOn';
 var ENABLED_STORAGE_KEY = 'enabled';
 var PROMPT_MODE_KEY     = 'promptMode';
+var FEED_TAGS_KEY       = 'feedTags';    // array of enabled tags; missing = all
+var OVERLAY_MODE_KEY    = 'overlayMode'; // 'full' (default) | 'pip'
 var PANEL_COUNT         = 3;
 
 // ---------------------------------------------------------------------------
@@ -49,6 +51,8 @@ var _suppressUntilDone = false;
 var _lastSignature  = 0;
 var _soundOn        = false;
 var _promptMode     = false;
+var _feedTags       = null;    // enabled vibe tags; null = no filter (all clips)
+var _overlayMode    = 'full';  // 'full' | 'pip'
 var _activeTag      = null;    // tag detected from last prompt
 var _videos         = [];      // tracked <video> elements for cleanup
 var _sloganIndex    = 0;
@@ -149,13 +153,31 @@ function _pickClips(count) {
   var feed = (typeof FEED !== 'undefined' && FEED.length) ? FEED : [];
   if (!feed.length) return [];
 
+  // 1. Vibe filter — user-selected tags from the popup. Untagged (general)
+  //    clips only appear when no filter is active. If the filter empties the
+  //    pool (e.g. a stale tag), fall back to the full feed rather than
+  //    showing blank panels.
   var pool = feed;
-  if (_promptMode && _activeTag) {
-    var tagged = feed.filter(function(c) {
+  if (Array.isArray(_feedTags) && _feedTags.length) {
+    var vibed = feed.filter(function(c) {
+      if (!Array.isArray(c.tags) || !c.tags.length) return false;
+      for (var i = 0; i < c.tags.length; i++) {
+        if (_feedTags.indexOf(c.tags[i]) !== -1) return true;
+      }
+      return false;
+    });
+    if (vibed.length) pool = vibed;
+  }
+
+  // 2. Prompt-aware ranking — only within the vibe-enabled pool, and only if
+  //    the detected tag isn't excluded by the user's vibe selection.
+  if (_promptMode && _activeTag &&
+      (!Array.isArray(_feedTags) || !_feedTags.length || _feedTags.indexOf(_activeTag) !== -1)) {
+    var tagged = pool.filter(function(c) {
       return Array.isArray(c.tags) && c.tags.indexOf(_activeTag) !== -1;
     });
     if (tagged.length >= count) pool = tagged;
-    // If not enough tagged clips, fall back to full feed
+    // If not enough tagged clips, fall back to the vibe pool
   }
 
   // Shuffle and pick `count` unique clips
@@ -170,8 +192,11 @@ function _pickClips(count) {
 function _buildOverlay(clips) {
   var el = document.createElement('div');
   el.id = 'doombreak-overlay';
+  if (_overlayMode === 'pip') el.className = 'db-pip';
   el.setAttribute('role', 'dialog');
   el.setAttribute('aria-label', 'Doomscroll Break');
+
+  var panelTarget = _overlayMode === 'pip' ? 1 : PANEL_COUNT;
 
   el.innerHTML = [
     '<style>',
@@ -218,6 +243,18 @@ function _buildOverlay(clips) {
     '  transition:background .15s;',
     '}',
     '.db-btn:hover { background:rgba(255,255,255,.28); }',
+    /* PiP (mini player) variant — corner overlay instead of full-screen */
+    '#doombreak-overlay.db-pip {',
+    '  inset:auto; right:18px; bottom:18px;',
+    '  width:300px; height:480px;',
+    '  border-radius:18px; overflow:hidden;',
+    '  box-shadow:0 12px 40px rgba(0,0,0,.55);',
+    '}',
+    '#doombreak-overlay.db-pip #doombreak-slogan { display:none; }',
+    '#doombreak-overlay.db-pip #doombreak-header { padding:10px 12px 24px; gap:8px; }',
+    '#doombreak-overlay.db-pip #doombreak-title  { font-size:12.5px; }',
+    '#doombreak-overlay.db-pip #doombreak-footer { padding:24px 12px 12px; }',
+    '#doombreak-overlay.db-pip .db-btn { padding:5px 10px; font-size:11px; }',
     '</style>',
 
     '<div id="doombreak-header">',
@@ -242,8 +279,8 @@ function _buildOverlay(clips) {
         '</div>',
       ].join('');
     }).join(''),
-    // Pad to PANEL_COUNT if fewer clips
-    Array(Math.max(0, PANEL_COUNT - clips.length)).fill('<div class="db-panel"></div>').join(''),
+    // Pad to the panel target if fewer clips
+    Array(Math.max(0, panelTarget - clips.length)).fill('<div class="db-panel"></div>').join(''),
     '</div>',
 
     '<div id="doombreak-footer">',
@@ -273,7 +310,7 @@ function _escHtml(str) {
 function _showOverlay() {
   if (_overlayEl) return; // already showing
 
-  var clips = _pickClips(PANEL_COUNT);
+  var clips = _pickClips(_overlayMode === 'pip' ? 1 : PANEL_COUNT);
   _overlayEl = _buildOverlay(clips);
   document.body.appendChild(_overlayEl);
 
@@ -508,10 +545,12 @@ function _onKeyDown(e) {
 
 function _boot() {
   // Load persisted preferences
-  _storageGet([SOUND_STORAGE_KEY, PROMPT_MODE_KEY, ENABLED_STORAGE_KEY], function(res) {
-    _soundOn    = !!res[SOUND_STORAGE_KEY];
-    _promptMode = !!res[PROMPT_MODE_KEY];
-    var enabled = res[ENABLED_STORAGE_KEY] !== false; // default enabled
+  _storageGet([SOUND_STORAGE_KEY, PROMPT_MODE_KEY, ENABLED_STORAGE_KEY, FEED_TAGS_KEY, OVERLAY_MODE_KEY], function(res) {
+    _soundOn     = !!res[SOUND_STORAGE_KEY];
+    _promptMode  = !!res[PROMPT_MODE_KEY];
+    _feedTags    = Array.isArray(res[FEED_TAGS_KEY]) ? res[FEED_TAGS_KEY] : null;
+    _overlayMode = res[OVERLAY_MODE_KEY] === 'pip' ? 'pip' : 'full';
+    var enabled  = res[ENABLED_STORAGE_KEY] !== false; // default enabled
 
     if (!enabled) return;
 
@@ -549,6 +588,14 @@ if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged)
     if (changes[PROMPT_MODE_KEY]) {
       _promptMode = !!changes[PROMPT_MODE_KEY].newValue;
     }
+    if (changes[FEED_TAGS_KEY]) {
+      var v = changes[FEED_TAGS_KEY].newValue;
+      _feedTags = Array.isArray(v) ? v : null;
+    }
+    if (changes[OVERLAY_MODE_KEY]) {
+      _overlayMode = changes[OVERLAY_MODE_KEY].newValue === 'pip' ? 'pip' : 'full';
+      // Applies on the next overlay; a visible overlay keeps its layout.
+    }
   });
 }
 
@@ -569,6 +616,8 @@ if (typeof module !== 'undefined') {
     getLastSig:     function() { return _lastSignature; },
     getSoundOn:     function() { return _soundOn; },
     getPromptMode:  function() { return _promptMode; },
+    getFeedTags:    function() { return _feedTags; },
+    getOverlayMode: function() { return _overlayMode; },
 
     // Functions under test
     _tick:          _tick,
@@ -598,6 +647,8 @@ if (typeof module !== 'undefined') {
       _lastSignature     = 0;
       _soundOn           = false;
       _promptMode        = false;
+      _feedTags          = null;
+      _overlayMode       = 'full';
       _activeTag         = null;
       _videos            = [];
       _sloganIndex       = 0;
@@ -607,6 +658,8 @@ if (typeof module !== 'undefined') {
     _setSuppressed: function(v) { _suppressUntilDone = v; },
     _setActiveTag:  function(t) { _activeTag = t; },
     _setPromptMode: function(v) { _promptMode = v; },
+    _setFeedTags:   function(v) { _feedTags = v; },
+    _setOverlayMode:function(v) { _overlayMode = v; },
     _setSoundOn:    function(v) { _soundOn = v; },
     _setLastSig:    function(v) { _lastSignature = v; },
     _setOverlay:    function(v) { _overlayEl = v; },

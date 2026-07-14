@@ -71,6 +71,39 @@
       input:checked + .slider { background: #6366f1; }
       input:checked + .slider:before { transform: translateX(18px); }
 
+      /* ── Vibe picker ── */
+      #vibe-section h4 {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        margin: 0 0 8px 0;
+      }
+      #vibe-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+      }
+      .vibe {
+        display: flex; align-items: center; justify-content: center;
+        padding: 6px 4px;
+        background: #1e293b;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-size: 11.5px; font-weight: 600; color: #94a3b8;
+        cursor: pointer;
+        user-select: none;
+        transition: background .12s, border-color .12s, color .12s;
+      }
+      .vibe input { display: none; }
+      .vibe:has(input:checked) {
+        background: #312e81;
+        border-color: #6366f1;
+        color: #e0e7ff;
+      }
+      #vibe-hint { font-size: 10.5px; color: #475569; margin: 7px 0 0 0; }
+
       /* ── Divider ── */
       .divider { border: none; border-top: 1px solid #1e293b; margin: 14px 0; }
 
@@ -131,6 +164,33 @@
         <span class="slider"></span>
       </label>
     </div>
+
+    <div class="row">
+      <div class="label-col">
+        <div class="label">Mini Player</div>
+        <div class="sub">Corner overlay instead of full-screen</div>
+      </div>
+      <label class="switch" title="Show a small corner overlay instead of full-screen">
+        <input id="pipMode" type="checkbox" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Vibe picker -->
+    <section id="vibe-section">
+      <h4>Vibes</h4>
+      <div id="vibe-grid">
+        <label class="vibe"><input type="checkbox" data-tag="funny" /><span>😂 Funny</span></label>
+        <label class="vibe"><input type="checkbox" data-tag="calm"  /><span>🌊 Calm</span></label>
+        <label class="vibe"><input type="checkbox" data-tag="sport" /><span>🏀 Sport</span></label>
+        <label class="vibe"><input type="checkbox" data-tag="focus" /><span>🎯 Focus</span></label>
+        <label class="vibe"><input type="checkbox" data-tag="cats"  /><span>🐱 Cats</span></label>
+        <label class="vibe"><input type="checkbox" data-tag="dogs"  /><span>🐶 Dogs</span></label>
+      </div>
+      <p id="vibe-hint">All off = everything plays.</p>
+    </section>
 
     <hr class="divider" />
 

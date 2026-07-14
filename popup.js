@@ -15,6 +15,8 @@
 
 var btn        = document.getElementById('toggleBtn');
 var promptEl   = document.getElementById('promptMode');
+var pipEl      = document.getElementById('pipMode');
+var vibeEls    = Array.prototype.slice.call(document.querySelectorAll('#vibe-grid input[data-tag]'));
 var healthList = document.getElementById('health-list');
 var healthSumm = document.getElementById('health-summary');
 
@@ -122,10 +124,15 @@ function _escHtml(str) {
 // ---------------------------------------------------------------------------
 function refresh() {
   chrome.storage.local.get(
-    ['enabled', 'promptMode', 'selectorTelemetry'],
+    ['enabled', 'promptMode', 'overlayMode', 'feedTags', 'selectorTelemetry'],
     function(res) {
       renderToggle(res.enabled !== false); // default: enabled
       promptEl.checked = !!res.promptMode;
+      pipEl.checked    = res.overlayMode === 'pip';
+      var tags = Array.isArray(res.feedTags) ? res.feedTags : [];
+      vibeEls.forEach(function(el) {
+        el.checked = tags.indexOf(el.getAttribute('data-tag')) !== -1;
+      });
       renderHealth(res.selectorTelemetry);
     }
   );
@@ -143,6 +150,24 @@ btn.addEventListener('click', function() {
 
 promptEl.addEventListener('change', function() {
   chrome.storage.local.set({ promptMode: promptEl.checked }, refresh);
+});
+
+pipEl.addEventListener('change', function() {
+  chrome.storage.local.set({ overlayMode: pipEl.checked ? 'pip' : 'full' }, refresh);
+});
+
+// Vibe picker: store the checked tags; none checked = no filter (remove key).
+vibeEls.forEach(function(el) {
+  el.addEventListener('change', function() {
+    var tags = vibeEls
+      .filter(function(e) { return e.checked; })
+      .map(function(e) { return e.getAttribute('data-tag'); });
+    if (tags.length) {
+      chrome.storage.local.set({ feedTags: tags }, refresh);
+    } else {
+      chrome.storage.local.remove('feedTags', refresh);
+    }
+  });
 });
 
 // ---------------------------------------------------------------------------

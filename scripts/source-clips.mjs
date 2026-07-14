@@ -10,6 +10,7 @@
 //
 // Run:  npm run source            (4 clips per tag = 20 total)
 //       npm run source -- --per-tag 8
+//       npm run source -- --only cats,dogs --per-tag 12
 //
 // Requires ffmpeg on PATH (compresses each clip to fit the ≤700KB
 // bundle budget enforced by generate-feed.mjs).
@@ -45,6 +46,9 @@ try {
   process.exit(1);
 }
 
+const onlyArg = process.argv.indexOf('--only');
+const ONLY = onlyArg !== -1 ? process.argv[onlyArg + 1].split(',').map(t => t.trim()) : null;
+
 const perTagArg = process.argv.indexOf('--per-tag');
 const PER_TAG   = perTagArg !== -1 ? parseInt(process.argv[perTagArg + 1], 10) : 4;
 if (!Number.isInteger(PER_TAG) || PER_TAG < 1 || PER_TAG > 20) {
@@ -58,6 +62,8 @@ const QUERIES = {
   funny:   ['funny dog', 'funny cat', 'puppy playing', 'baby goat', 'parrot talking'],
   sport:   ['basketball dunk', 'skateboard trick', 'surfing wave', 'soccer training', 'snowboarding'],
   focus:   ['typing keyboard close up', 'pouring coffee', 'writing notebook', 'chess pieces', 'library study'],
+  cats:    ['cat playing', 'kitten', 'cat close up', 'sleepy cat', 'cat stretching'],
+  dogs:    ['dog playing', 'puppy', 'happy dog running', 'dog close up', 'dog beach'],
   general: ['city night timelapse', 'aerial coastline drone', 'neon street', 'northern lights', 'street food cooking'],
 };
 
@@ -111,6 +117,7 @@ const usedIds = new Set();
 let sourced = 0, failed = 0;
 
 for (const [tag, queries] of Object.entries(QUERIES)) {
+  if (ONLY && !ONLY.includes(tag)) continue;
   let got = 0, qi = 0, page = 1;
 
   while (got < PER_TAG && qi < queries.length) {

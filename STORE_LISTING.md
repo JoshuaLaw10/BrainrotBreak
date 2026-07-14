@@ -28,6 +28,8 @@ Enable the extension, then send any prompt on chatgpt.com. Doomscroll Break inst
 FEATURES
 • Auto-closes the instant ChatGPT is done — you never miss your answer
 • Live status badge shows Thinking → Typing as the response develops
+• Vibe picker: choose what plays — 😂 Funny, 🌊 Calm, 🏀 Sport, 🎯 Focus, 🐱 Cats, 🐶 Dogs
+• Mini Player mode: a small corner overlay instead of full-screen
 • Prompt-Aware Mode: ask about sports, get sports clips; ask for something calm, get calm clips
 • Daily streak counter tracks how many times it pulled you back today
 • Sound toggle and keyboard shortcut (Cmd/Ctrl+Shift+D)

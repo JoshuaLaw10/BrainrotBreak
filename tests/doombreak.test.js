@@ -184,6 +184,89 @@ describe('_pickClips()', () => {
 });
 
 // ===========================================================================
+// _pickClips — vibe filter (feedTags)
+// ===========================================================================
+describe('_pickClips() vibe filter', () => {
+  it('only returns clips matching enabled vibes', () => {
+    mod._setFeedTags(['sport']);
+    const clips = mod._pickClips(5);
+    clips.forEach(c => expect(c.tags).toContain('sport'));
+  });
+
+  it('supports multiple enabled vibes', () => {
+    mod._setFeedTags(['calm', 'funny']);
+    const clips = mod._pickClips(5);
+    clips.forEach(c =>
+      expect(c.tags.includes('calm') || c.tags.includes('funny')).toBe(true));
+  });
+
+  it('excludes untagged (general) clips when a vibe filter is active', () => {
+    global.FEED = [
+      { file: 'general_01.mp4', tags: [],        title: 'G', creator: 'X', license: 'P', source: 'https://x.com' },
+      { file: 'cats_01.mp4',    tags: ['cats'],  title: 'C', creator: 'X', license: 'P', source: 'https://x.com' },
+    ];
+    mod._setFeedTags(['cats']);
+    const clips = mod._pickClips(2);
+    expect(clips).toHaveLength(1);
+    expect(clips[0].file).toBe('cats_01.mp4');
+  });
+
+  it('null feedTags means no filtering', () => {
+    mod._setFeedTags(null);
+    expect(mod._pickClips(3)).toHaveLength(3);
+  });
+
+  it('falls back to full feed when the filter matches nothing', () => {
+    mod._setFeedTags(['dogs']); // stub FEED has no dogs clips
+    const clips = mod._pickClips(3);
+    expect(clips.length).toBe(3);
+  });
+
+  it('prompt-aware tag is ignored when excluded by the vibe filter', () => {
+    mod._setPromptMode(true);
+    mod._setActiveTag('sport');
+    mod._setFeedTags(['calm']);
+    const clips = mod._pickClips(1);
+    expect(clips[0].tags).toContain('calm');
+  });
+
+  it('prompt-aware tag ranks within the vibe pool when enabled', () => {
+    mod._setPromptMode(true);
+    mod._setActiveTag('sport');
+    mod._setFeedTags(['sport', 'calm']);
+    const clips = mod._pickClips(2);
+    clips.forEach(c => expect(c.tags).toContain('sport'));
+  });
+});
+
+// ===========================================================================
+// PiP (mini player) mode
+// ===========================================================================
+describe('PiP overlay mode', () => {
+  it('full mode renders 3 panels without the pip class', () => {
+    mod._showOverlay();
+    const el = document.getElementById('doombreak-overlay');
+    expect(el.classList.contains('db-pip')).toBe(false);
+    expect(el.querySelectorAll('.db-panel')).toHaveLength(3);
+  });
+
+  it('pip mode renders a single panel with the pip class', () => {
+    mod._setOverlayMode('pip');
+    mod._showOverlay();
+    const el = document.getElementById('doombreak-overlay');
+    expect(el.classList.contains('db-pip')).toBe(true);
+    expect(el.querySelectorAll('.db-panel')).toHaveLength(1);
+  });
+
+  it('pip overlay still has close and sound controls', () => {
+    mod._setOverlayMode('pip');
+    mod._showOverlay();
+    expect(document.getElementById('doombreak-close')).not.toBeNull();
+    expect(document.getElementById('doombreak-sound')).not.toBeNull();
+  });
+});
+
+// ===========================================================================
 // Slogans
 // ===========================================================================
 describe('slogans', () => {

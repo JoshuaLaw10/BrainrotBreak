@@ -18,6 +18,14 @@
     tag: 'funny',
   },
   {
+    pattern: /\b(cat|cats|kitten|kitty|feline|meow)\b/,
+    tag: 'cats',
+  },
+  {
+    pattern: /\b(dog|dogs|puppy|puppies|canine|woof|golden retriever|labrador|corgi)\b/,
+    tag: 'dogs',
+  },
+  {
     pattern: /\b(focus|code|coding|program|debug|work|study|studying|learn|learning|concentrate|deep.?work|flow|productivity|productive|research|write|writing)\b/,
     tag: 'focus',
   },

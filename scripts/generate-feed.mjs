@@ -27,7 +27,7 @@ const MEDIA_DIR = join(ROOT, 'media');
 const METADATA  = join(ROOT, 'metadata.json');
 const FEED_OUT  = join(ROOT, 'data', 'feed.js');
 
-const ALLOWED_TAGS = new Set(['calm', 'funny', 'sport', 'focus']);
+const ALLOWED_TAGS = new Set(['calm', 'funny', 'sport', 'focus', 'cats', 'dogs']);
 const MAX_BYTES    = 700 * 1024; // 700 KB per clip
 
 const REQUIRED_FIELDS = ['tags', 'creator', 'title', 'license', 'source'];
@@ -220,7 +220,7 @@ lines.push('');
 // Runtime validation block (mirrors the original handwritten file).
 lines.push('// Validate at load time so bad entries fail loudly during development.');
 lines.push("if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {");
-lines.push("  var _validTags = new Set(['calm', 'funny', 'sport', 'focus']);");
+lines.push("  var _validTags = new Set(['calm', 'funny', 'sport', 'focus', 'cats', 'dogs']);");
 lines.push('  FEED.forEach(function(item, i) {');
 lines.push("    if (!item.file) throw new Error('FEED[' + i + ']: missing file');");
 lines.push("    if (!item.creator) throw new Error('FEED[' + i + ']: missing creator');");

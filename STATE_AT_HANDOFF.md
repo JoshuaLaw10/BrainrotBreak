@@ -51,7 +51,9 @@ A Chrome extension (MV3) that shows a self-closing video overlay on chatgpt.com 
 
 ## 🔴 Blocked on human action
 
-**Only step 6/7 remain: create the $5 dev account and submit.** Upload `dist/doombreak-v1.0.0.zip` (rebuild anytime with `npm run package`), paste copy from `STORE_LISTING.md`, privacy URL: https://joshualaw10.github.io/DoomBreak/privacy.html
+**Only step 6/7 remain: create the $5 dev account and submit.** Upload `dist/doombreak-v1.1.0.zip` (rebuild anytime with `npm run package`), paste copy from `STORE_LISTING.md`, pick 5 of the 6 screenshots in `store-assets/`, privacy URL: https://joshualaw10.github.io/DoomBreak/privacy.html
+
+**v1.1.0 (2026-07-14):** vibe picker (😂🌊🏀🎯🐱🐶 chips in popup → `feedTags`), Mini Player / PiP mode (`overlayMode: 'pip'`, corner 300×480, 1 panel), 24 new cats/dogs clips (104 total, 44.6MB), prompt-aware respects vibe selection. 102 tests; live E2E 12/12 including vibe-filtered PiP on chatgpt.com. Multi-LLM adapter work lives on branch `experimental/multi-llm` — do NOT merge until selectors are verified against logged-in Claude/Gemini sessions.
 
 These **cannot be done by code alone** — they require a browser or physical action:
 
